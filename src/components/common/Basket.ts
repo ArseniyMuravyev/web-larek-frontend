@@ -1,48 +1,91 @@
-import { createElement, ensureElement, formatNumber } from '../../utils/utils';
-import { Component } from '../base/Component';
-import { EventEmitter } from '../base/events';
+import { createElement } from '../../utils/utils'
+import { Component } from '../base/Component'
+import { EventEmitter } from '../base/events'
 
 interface IBasketView {
-	items: HTMLElement[];
-	total: number;
+	items?: HTMLElement[];
+	total?: number;
 }
 
 export class Basket extends Component<IBasketView> {
 	protected _list: HTMLElement;
-	protected _total: HTMLElement;
-	protected _button: HTMLElement;
+	protected _totalElement: HTMLElement;
+	protected _button: HTMLButtonElement;
+	protected _basketItems: HTMLElement[] = [];
+	protected _total: string = '0';
 
 	constructor(container: HTMLElement, protected events: EventEmitter) {
 		super(container);
 
-		this._list = ensureElement<HTMLElement>('.basket__list', this.container);
-		this._total = this.container.querySelector('.basket__price');
+		this._list = this.container.querySelector('.basket__list');
+		this._totalElement = this.container.querySelector('.basket__price');
 		this._button = this.container.querySelector('.basket__action');
 
-		if (this._button) {
-			this._button.addEventListener('click', () => {
-				events.emit('order:open');
-			});
-		}
+		this._button.setAttribute('disabled', 'disabled');
 
-		this.items = [];
+		this._button.addEventListener('click', () => {
+			events.emit('order:open');
+		});
+	}
+
+	get total(): string {
+		return this._total;
+	}
+
+	set total(value: string) {
+		this._total = value;
+		this.setText(this._totalElement, `${value} синапсов`);
 	}
 
 	set items(items: HTMLElement[]) {
-		if (items.length) {
-			this._list.replaceChildren(...items);
-		} else {
+		if (items.length === 0) {
 			this._list.replaceChildren(
 				createElement<HTMLParagraphElement>('p', {
 					textContent: 'Корзина пуста',
 				})
 			);
+		} else {
+			this._list.replaceChildren(...items);
 		}
 	}
 
-	set total(total: number) {
-		this.setText(this._total, formatNumber(total));
+	private updateButtonState() {
+		if (this._basketItems.length === 0) {
+			this._button.setAttribute('disabled', 'disabled');
+		} else {
+			this._button.removeAttribute('disabled');
+		}
 	}
 
-	removeItem() {}
+	getBasketItems() {
+		return this._basketItems;
+	}
+
+	addItem(item: HTMLElement) {
+		this._basketItems.push(item);
+		this.updateButtonState();
+	}
+
+	removeItem(item: HTMLElement) {
+		const index = this._basketItems.indexOf(item);
+		if (index !== -1) {
+			this._basketItems.splice(index, 1);
+			this.updateButtonState();
+		}
+	}
+
+	removeAllItem() {
+		this._basketItems = [];
+		this.total = '0';
+	}
+
+	render(data: Partial<IBasketView>): HTMLElement {
+		if (data.items) {
+			this.items = data.items;
+		}
+		if (data.total) {
+			this.total = data.total.toString();
+		}
+		return this.container;
+	}
 }

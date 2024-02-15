@@ -1,7 +1,5 @@
-export type OrderPayment = 'card' | 'cash';
-
 export interface IOrderForm {
-	payment: OrderPayment;
+	payment: string | null;
 	email: string;
 	phone: string;
 	address: string;
@@ -9,12 +7,14 @@ export interface IOrderForm {
 
 export interface IOrder extends IOrderForm {
 	items: string[];
+	total: number;
 }
 
 export type FormErrors = Partial<Record<keyof IOrder, string>>;
 
 export interface IOrderResult {
 	id: string;
+	total: number;
 }
 
 export interface ICard {
@@ -31,4 +31,9 @@ export interface IAppState {
 	basket: string[];
 	order: IOrder | null;
 	loading: boolean;
+	total: number | null;
 }
+
+export type CatalogChangeEvent = {
+	catalog: ICard[];
+};

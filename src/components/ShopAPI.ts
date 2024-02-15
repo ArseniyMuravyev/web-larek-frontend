@@ -23,8 +23,7 @@ export class ShopAPI extends Api implements IShopAPI {
 	}
 
 	getProductsList(): Promise<ICard[]> {
-		return this.get('/product')
-		.then((data: ApiListResponse<ICard>) =>
+		return this.get('/product').then((data: ApiListResponse<ICard>) =>
 			data.items.map((item) => ({
 				...item,
 				image: this.cdn + item.image,

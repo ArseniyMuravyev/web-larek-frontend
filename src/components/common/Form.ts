@@ -1,3 +1,4 @@
+import { ensureElement } from '../../utils/utils';
 import { Component } from '../base/Component';
 import { IEvents } from '../base/events';
 
@@ -12,13 +13,39 @@ export class Form<T> extends Component<IFormState> {
 
 	constructor(protected container: HTMLFormElement, protected events: IEvents) {
 		super(container);
+
+		this._submit = ensureElement<HTMLButtonElement>(
+			'button[type=submit]',
+			this.container
+		);
+		this._errors = container.querySelector('.form__errors');
+
+		this.container.addEventListener('input', (e: Event) => {
+			const target = e.target as HTMLInputElement;
+			const field = target.name as keyof T;
+			const value = target.value;
+			this.onInputChange(field, value);
+		});
+
+		this.container.addEventListener('submit', (e: Event) => {
+			e.preventDefault();
+			this.events.emit(`${this.container.name}:submit`);
+		});
 	}
 
 	protected onInputChange(field: keyof T, value: string) {
-		this.events.emit(`${this.container.name}.${String(field)}:change`, {
-			field,
-			value,
-		});
+		if (field === 'payment') {
+			this.handlePaymentChange(value);
+		} else {
+			this.events.emit(`${this.container.name}.${String(field)}:change`, {
+				field,
+				value,
+			});
+		}
+	}
+
+	private handlePaymentChange(value: string) {
+		this.events.emit(`${this.container.name}.payment:change`, { value });
 	}
 
 	set valid(value: boolean) {

@@ -11,6 +11,8 @@ interface ISuccessActions {
 
 export class Success extends Component<ISuccess> {
 	protected _close: HTMLElement;
+	protected _totalElement: HTMLElement;
+	protected _total: string = '0';
 
 	constructor(container: HTMLElement, actions: ISuccessActions) {
 		super(container);
@@ -20,8 +22,19 @@ export class Success extends Component<ISuccess> {
 			this.container
 		);
 
+		this._totalElement = container.querySelector('.order-success__description');
+
 		if (actions?.onClick) {
 			this._close.addEventListener('click', actions.onClick);
 		}
+	}
+
+	get total(): string {
+		return this._total;
+	}
+
+	set total(value: string) {
+		this._total = value;
+		this.setText(this._totalElement, `Списано ${value} синапсов`);
 	}
 }
