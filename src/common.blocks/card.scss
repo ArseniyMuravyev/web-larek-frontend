@@ -9,6 +9,11 @@
 	color: white;
 	padding: $defaultPadding;
 
+	&__button:disabled {
+		opacity: 0.25;
+		cursor: default;
+	}
+
 	&_full {
 		flex-direction: row;
 		background-color: transparent;

@@ -1,4 +1,11 @@
-import { FormErrors, IAppState, ICard, IOrder, IOrderForm } from '../types';
+import {
+	FormErrors,
+	IAppState,
+	ICard,
+	IOrder,
+	IOrderForm,
+	OrderPayment,
+} from '../types';
 import { Model } from './base/Model';
 
 export class ProductItem extends Model<ICard> {
@@ -15,7 +22,7 @@ export class AppState extends Model<IAppState> {
 	catalog: ICard[];
 	loading: boolean;
 	order: IOrder = {
-		payment: null,
+		payment: 'card',
 		address: '',
 		phone: '',
 		email: '',
@@ -31,7 +38,7 @@ export class AppState extends Model<IAppState> {
 	}
 
 	setOrderField(field: keyof IOrderForm, value: string) {
-		this.order[field] = value;
+		this.order[field] = value as OrderPayment;
 
 		if (this.validateForm() && this.validateFormContacts()) {
 			this.events.emit('order:ready', this.order);

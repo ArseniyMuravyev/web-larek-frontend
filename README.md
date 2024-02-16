@@ -47,9 +47,11 @@ yarn build
 
 ## Описание данных
 
+`type OrderPayment = 'card' | 'cash'` - тип способа оплаты.
+
 ```
 interface IOrderForm {
-	payment: string | null;
+	payment: OrderPayment;
 	email: string;
 	phone: string;
 	address: string;
@@ -214,15 +216,9 @@ interface IMiniCard {
 
 Методы:
 
-`toggleClass(element: HTMLElement, className: string, force?: boolean)` - используется для переключения класса элемента.
-
 `protected setText(element: HTMLElement, value: unknown)` - устанавливает текстовое содержимое элемента.
 
 `setDisabled(element: HTMLElement, state: boolean)` - используется для установки состояния блокировки элемента.
-
-`protected setHidden(element: HTMLElement)` - скрывает элемент, устанавливая свойство display: none.
-
-`protected setVisible(element: HTMLElement)` - показывает скрытый элемент, удаляя свойство display: none.
 
 `protected setImage(element: HTMLImageElement, src: string, alt?: string)` - устанавливает изображение для элемента img.
 
@@ -238,11 +234,15 @@ interface IMiniCard {
 
 Методы:
 
-`getBasketItems()` - получить количество элементов в корзине.
-
 `set items(items: HTMLElement[])` - устанавливает товары в корзину.
 
+`get total(): string` - получить итоговую цену.
+
 `set total(total: number)` - устанавливает итоговую цену.
+
+`updateButtonState()` - обновление состояния кнопки.
+
+`getBasketItems()` - получить количество элементов в корзине.
 
 `addItem(item: HTMLElement)` - добавить товар в корзину.
 
@@ -264,13 +264,7 @@ interface IMiniCard {
 
 `protected onInputChange(field: keyof T, value: string)` - обработка изменений ввода пользователем.
 
-```
-private handlePaymentChange(value: string) {
-		this.events.emit(`${this.container.name}.payment:change`, { value });
-}
-```
-
-Для обработки изменений способа оплаты
+`private handlePaymentChange(value: string)` - для обработки изменений способа оплаты
 
 `set valid(value: boolean)` - управляет доступностью кнопки в зависимости от валидности данных в форме.
 
@@ -330,6 +324,8 @@ private handlePaymentChange(value: string) {
 
 `set description(value: string)` - устанавливает описание товара.
 
+`` - отключает кнопку добавления товара в корзину.
+
 ### 7. class Page
 
 Класс Page наследует функциональность от класса Component и реализует интерфейс IPage. Он предназначен для работы с элементами страницы, такими как счетчик корзины и каталог товаров.
@@ -380,7 +376,7 @@ private handlePaymentChange(value: string) {
 
 Конструктор:
 
-`constructor(container: HTMLElement,events?: EventEmitter,actions?: IMiniCardActions)` - принимает в себя контейнер и события и действия в качестве необязательных параметров.
+`constructor(container: HTMLElement, events?: EventEmitter)` - принимает в себя контейнер и события в качестве необязательного параметра.
 
 Методы:
 

@@ -38,16 +38,7 @@ const success = new Success(cloneTemplate(successTemplate), {
 	},
 });
 
-events.on('basket:add', (item: ICard) => {
-	const itemAlreadyInBasket = basket.getBasketItems().some((basketItem) => {
-		const titleElement = basketItem.querySelector('.card__title');
-		return titleElement.textContent === item.title;
-	});
-
-	if (itemAlreadyInBasket) {
-		return;
-	}
-
+events.on('basket:add', (item: ICard & { button: HTMLButtonElement }) => {
 	const miniCard = new MiniCard(cloneTemplate(cardBasketTemplate), events);
 	const index = basket.getBasketItems().length + 1;
 	const cardElement = miniCard.render({
@@ -94,6 +85,12 @@ events.on('basket:remove', (item: HTMLElement) => {
 	}
 	basket.total = (parseFloat(basket.total) - price).toString();
 
+	basket.getBasketItems().forEach((basketItem, index) => {
+		basketItem.querySelector('.basket__item-index').textContent = (
+			index + 1
+		).toString();
+	});
+
 	modal.render({
 		content: basket.render({
 			items: basket.getBasketItems(),
@@ -103,6 +100,7 @@ events.on('basket:remove', (item: HTMLElement) => {
 
 	page.counter = basket.getBasketItems().length;
 });
+
 events.on<CatalogChangeEvent>('items:changed', () => {
 	page.catalog = appData.catalog.map((item) => {
 		const card = new Card(cloneTemplate(cardCatalogTemplate), events, {
@@ -121,7 +119,16 @@ events.on<CatalogChangeEvent>('items:changed', () => {
 });
 
 events.on('card:select', (item: ICard) => {
+	const alreadyInBasket = basket.getBasketItems().some((basketItem) => {
+		const titleElement = basketItem.querySelector('.card__title');
+		return titleElement.textContent === item.title;
+	});
+
 	const card = new Card(cloneTemplate(cardPreviewTemplate), events);
+
+	if (alreadyInBasket || item.price === null) {
+		card.disableButton();
+	}
 
 	modal.render({
 		content: card.render({
@@ -149,7 +156,7 @@ events.on('order:submit', () => {
 events.on('order:open', () => {
 	modal.render({
 		content: order.render({
-			payment: null,
+			payment: 'card',
 			address: '',
 			valid: false,
 			errors: [],
@@ -167,12 +174,20 @@ events.on('order:success', () => {
 				content: success.render({}),
 			});
 			basket.removeAllItem();
+			appData.order = {
+				payment: appData.order.payment,
+				address: '',
+				phone: '',
+				email: '',
+				items: [],
+				total: null,
+			};
+			basket.updateButtonState();
+			page.counter = 0;
 		})
 		.catch((err) => {
 			console.error(err);
 		});
-
-	page.counter = 0;
 });
 
 events.on(

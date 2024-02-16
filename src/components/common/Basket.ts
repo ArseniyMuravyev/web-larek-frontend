@@ -1,6 +1,6 @@
-import { createElement } from '../../utils/utils'
-import { Component } from '../base/Component'
-import { EventEmitter } from '../base/events'
+import { createElement } from '../../utils/utils';
+import { Component } from '../base/Component';
+import { EventEmitter } from '../base/events';
 
 interface IBasketView {
 	items?: HTMLElement[];
@@ -12,7 +12,7 @@ export class Basket extends Component<IBasketView> {
 	protected _totalElement: HTMLElement;
 	protected _button: HTMLButtonElement;
 	protected _basketItems: HTMLElement[] = [];
-	protected _total: string = '0';
+	protected _total = '0';
 
 	constructor(container: HTMLElement, protected events: EventEmitter) {
 		super(container);
@@ -49,7 +49,7 @@ export class Basket extends Component<IBasketView> {
 		}
 	}
 
-	private updateButtonState() {
+	updateButtonState() {
 		if (this._basketItems.length === 0) {
 			this._button.setAttribute('disabled', 'disabled');
 		} else {

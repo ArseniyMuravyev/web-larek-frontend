@@ -12,7 +12,7 @@ interface ISuccessActions {
 export class Success extends Component<ISuccess> {
 	protected _close: HTMLElement;
 	protected _totalElement: HTMLElement;
-	protected _total: string = '0';
+	protected _total = '0';
 
 	constructor(container: HTMLElement, actions: ISuccessActions) {
 		super(container);

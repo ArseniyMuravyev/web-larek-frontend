@@ -1,5 +1,7 @@
+export type OrderPayment = 'card' | 'cash';
+
 export interface IOrderForm {
-	payment: string | null;
+	payment: OrderPayment;
 	email: string;
 	phone: string;
 	address: string;

@@ -1,4 +1,5 @@
 import { ICard } from '../types';
+import { categoryClassMap } from '../utils/constants';
 import { Component } from './base/Component';
 import { EventEmitter } from './base/events';
 
@@ -14,11 +15,7 @@ interface IMiniCard {
 	deleteButton: HTMLButtonElement;
 }
 
-interface IMiniCardActions {
-	onClick: (event: MouseEvent) => void;
-}
-
-export class Card<T> extends Component<ICard> {
+export class Card extends Component<ICard> {
 	protected _title: HTMLElement;
 	protected _image: HTMLImageElement;
 	protected _description: HTMLElement;
@@ -26,14 +23,6 @@ export class Card<T> extends Component<ICard> {
 	protected _price: HTMLElement;
 	protected _button: HTMLButtonElement;
 	protected _id: string;
-
-	private categoryClassMap: Record<string, string> = {
-		'софт-скил': 'soft',
-		'другое': 'other',
-		'дополнительное': 'additional',
-		'кнопка': 'button',
-		'хард-скил': 'hard',
-	};
 
 	constructor(
 		container: HTMLElement,
@@ -90,9 +79,8 @@ export class Card<T> extends Component<ICard> {
 
 	set category(value: string) {
 		this._category.textContent = value;
-
 		this._category.className = `card__category card__category_${
-			this.categoryClassMap[value.toLowerCase()]
+			categoryClassMap[value.toLowerCase()]
 		}`;
 	}
 
@@ -101,7 +89,7 @@ export class Card<T> extends Component<ICard> {
 	}
 
 	disableButton() {
-		this._button.disabled = true;
+		this._button.setAttribute('disabled', 'disabled');
 	}
 }
 
@@ -112,11 +100,7 @@ export class MiniCard extends Component<IMiniCard> {
 	protected _index: HTMLElement;
 	protected _id: string;
 
-	constructor(
-		container: HTMLElement,
-		events?: EventEmitter,
-		actions?: IMiniCardActions
-	) {
+	constructor(container: HTMLElement, events?: EventEmitter) {
 		super(container);
 		this._deleteButton = container.querySelector(`.basket__item-delete`);
 		this._title = container.querySelector('.card__title');

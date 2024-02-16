@@ -4,7 +4,7 @@ import { Form } from './common/Form';
 
 export class Order extends Form<IOrderForm> {
 	protected _paymentButtons: NodeListOf<HTMLButtonElement>;
-	public payment: string | null = null;
+	public payment: string = 'card';
 
 	constructor(container: HTMLFormElement, events: IEvents) {
 		super(container, events);
@@ -16,6 +16,9 @@ export class Order extends Form<IOrderForm> {
 				button.addEventListener('click', () => {
 					this.handleButtonClick(button);
 				});
+				if (button.getAttribute('name') === 'card') {
+					button.classList.add('button_alt-active');
+				}
 			});
 		}
 	}
